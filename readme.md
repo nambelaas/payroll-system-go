@@ -70,7 +70,8 @@ go test ./tests/... -v
 _Gunakan JWT token dalam `Authorization: Bearer <token>` untuk akses._
 
 ## 📚 Dokumentasi Tambahan
-Lihat `docs/api.md` untuk spesifikasi endpoint lebih detail
+- Lihat `docs/api.md` untuk spesifikasi endpoint lebih detail
+- Lihat `docs/database.md` untuk keterangan table
 
 ---
 ## 🛡️ Lisensi
