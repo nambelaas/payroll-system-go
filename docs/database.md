@@ -83,7 +83,7 @@
 |Created By|❎||text|not null|User yang menambahkan record|
 |Updated By|❎||text|null|User yang mengubah record|
 
-### 💰 Payslip
+### 💰 Payslips
 |Field|Primary|Foreign|Tipe|Default|Description|
 |:---|:----:|:---:|:----|:---|:----|
 |ID|✅||bigint|increment|Id payslips|
@@ -103,7 +103,7 @@
 ### ⚙️ Audit Logs
 |Field|Primary|Foreign|Tipe|Default|Description|
 |:---|:----:|:---:|:----|:---|:----|
-|ID|✅||bigint|increment|Id payslips|
+|ID|✅||bigint|increment|Id log|
 |Request Id|❎||text|not null|Id unik untuk setiap request|
 |User Id|❎|Users[ID]|bigint|not null|Id user|
 |Endpoint|❎||text|not null|Endpoint yang digunakan|
