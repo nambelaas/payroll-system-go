@@ -41,6 +41,11 @@ cd payroll-system-go
 go mod tidy
 ```
 
+## 🌱 Seeding Aplikasi (Hanya untuk awal instalasi)
+```
+go run cmd/seed/main.go
+```
+
 ## 🚀 Menjalankan Aplikasi
 ```
 go run cmd/main.go

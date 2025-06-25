@@ -8,5 +8,4 @@ import (
 func main() {
 	pkg.ConnectDB()
 	seeder.SeedUser()
-
 }
