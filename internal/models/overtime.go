@@ -9,5 +9,8 @@ type Overtime struct {
 	StartTime  time.Time
 	EndTime    time.Time
 	Hours      float64
+	CreatedBy string
+	UpdatedBy *string `gorm:"default:null"`
 	CreatedAt  time.Time
+	UpdatedAt *time.Time `gorm:"default:null"`
 }

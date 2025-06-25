@@ -2,8 +2,9 @@ package middlewares
 
 import (
 	"net/http"
-	"github.com/nambelaas/payroll-system-go/internal/utils"
 	"strings"
+
+	"github.com/nambelaas/payroll-system-go/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,6 +16,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Missing or invalid Authorization header",
 			})
+			c.Abort()
 			return
 		}
 
@@ -24,6 +26,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": "Unauthorized",
 			})
+			c.Abort()
 			return
 		}
 

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"math"
 	"net/http"
 	"time"
 
@@ -16,6 +17,7 @@ type PayrollPeriodRequest struct {
 }
 
 func CreatePayrollPeriod(c *gin.Context) {
+	userId, _ := c.Get("user_id")
 	var req PayrollPeriodRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -34,10 +36,20 @@ func CreatePayrollPeriod(c *gin.Context) {
 		return
 	}
 
+	var user models.User
+	err := pkg.DB.First(&user, userId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
 	period := models.PayrollPeriod{
 		StartDate: startDate,
 		EndDate:   endDate,
 		IsClosed:  false,
+		CreatedBy: user.Username,
 	}
 	if err := pkg.DB.Create(&period).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -57,6 +69,7 @@ type RunPayrollRequest struct {
 }
 
 func RunPayroll(c *gin.Context) {
+	userId, _ := c.Get("user_id")
 	var req RunPayrollRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -86,11 +99,30 @@ func RunPayroll(c *gin.Context) {
 	workdays := countWeekdays(period.StartDate, period.EndDate)
 	totalHoursPerMonth := float64(workdays * 8)
 
+	var user models.User
+	err := pkg.DB.First(&user, userId).Error
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User not found",
+		})
+		return
+	}
+
+	now := time.Now()
+	updateTime := time.Date(now.Year(), now.Month(), now.Day(), now.Day(), now.Minute(), now.Second(), 0, now.Location())
+
 	for _, emp := range employees {
+		attHours := 0.0
 		var attendances []models.Attendance
 		pkg.DB.Where("employee_id = ? and date between ? and ?", emp.ID, period.StartDate, period.EndDate).Find(&attendances)
 
-		attHours := float64(len(attendances) * 8)
+		for _, att := range attendances {
+			if att.CheckOut != nil && !att.CheckOut.IsZero() {
+				durasi := att.CheckOut.Sub(att.CheckIn).Hours()
+				attHours += durasi
+			}
+		}
+
 		var overtimes []models.Overtime
 		pkg.DB.Where("employee_id = ? and date between ? and ?", emp.ID, period.StartDate, period.EndDate).Find(&overtimes)
 
@@ -106,13 +138,16 @@ func RunPayroll(c *gin.Context) {
 		for _, r := range reimbursements {
 			rbSum += r.Amount
 			r.Status = "approved"
+			r.UpdatedBy = &user.Username
+			r.UpdatedAt = &updateTime
 			pkg.DB.Save(&r)
 		}
 
 		perHour := emp.Salary / totalHoursPerMonth
-		proratedSalary := perHour * attHours
-		overtimePay := otHours * perHour * 2
-		total := proratedSalary + overtimePay + rbSum
+		proratedSalary := math.Round(perHour*attHours*100) / 100
+		overtimePay := math.Round(otHours*perHour*2*100) / 100
+		rbSum = math.Round(rbSum*100) / 100
+		total := math.Round((proratedSalary+overtimePay+rbSum)*100) / 100
 
 		payslip := models.Payslip{
 			EmployeeId:       emp.ID,
@@ -123,16 +158,19 @@ func RunPayroll(c *gin.Context) {
 			OvertimePay:      overtimePay,
 			ReimbursementSum: rbSum,
 			TotalTakeHome:    total,
+			CreatedBy:        user.Username,
 		}
 		pkg.DB.Create(&payslip)
-
-		period.IsClosed = true
-		pkg.DB.Save(&period)
-
-		c.JSON(http.StatusOK, gin.H{
-			"error": "Payroll processed successfully",
-		})
 	}
+
+	period.IsClosed = true
+	period.UpdatedBy = &user.Username
+	period.UpdatedAt = &updateTime
+	pkg.DB.Save(&period)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Payroll processed successfully",
+	})
 }
 
 func countWeekdays(start, end time.Time) int {

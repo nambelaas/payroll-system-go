@@ -9,5 +9,8 @@ type Reimbursement struct {
 	Amount      float64 `gorm:"not null"`
 	Status      string  `gorm:"default:'pending'"`
 	Date        time.Time
+	CreatedBy   string
+	UpdatedBy   *string `gorm:"default:null"`
 	CreatedAt   time.Time
+	UpdatedAt   *time.Time `gorm:"default:null"`
 }

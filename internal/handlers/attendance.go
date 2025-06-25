@@ -53,6 +53,7 @@ func SubmitAttendance(c *gin.Context) {
 		EmployeeId: emp.ID,
 		Date:       now,
 		CheckIn:    now,
+		CreatedBy:  emp.Name,
 	}
 	pkg.DB.Create(&att)
 
@@ -100,6 +101,8 @@ func SubmitCheckOut(c *gin.Context) {
 	}
 
 	att.CheckOut = &now
+	att.UpdatedBy = &emp.Name
+	att.UpdatedAt = &now
 	pkg.DB.Save(&att)
 
 	c.JSON(http.StatusOK, gin.H{

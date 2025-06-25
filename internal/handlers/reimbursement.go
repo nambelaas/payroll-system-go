@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"net/http"
+	"time"
+
 	"github.com/nambelaas/payroll-system-go/internal/models"
 	"github.com/nambelaas/payroll-system-go/pkg"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -39,6 +40,7 @@ func SubmitReimbursement(c *gin.Context) {
 		Amount:      req.Amount,
 		Status:      "pending",
 		Date:        time.Now(),
+		CreatedBy:   emp.Name,
 	}
 
 	if err := pkg.DB.Create(&rb).Error; err != nil {

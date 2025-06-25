@@ -6,6 +6,7 @@ Sistem backend Payroll Management yang dibangun menggunakan Golang (Gin Framewor
 - Menjalankan proses payroll
 - Menghasilkan slip gaji
 - Melihat ringkasan total payroll perusahaan
+- Mencatat setiap request yang dilakukan untuk kebutuhan audit
 
 ## 🏗️ Teknologi
 - Golang (Gin)
@@ -27,7 +28,7 @@ Sistem backend Payroll Management yang dibangun menggunakan Golang (Gin Framewor
 ├── pkg/                # Helper (DB, JWT, hash)
 ├── config/             # Konfigurasi
 ├── tests/              # Unit & integration tests
-├── docs/               # Dokumentasi API (opsional)
+├── docs/               # Dokumentasi API
 ├── go.mod
 └── README.md
 ```

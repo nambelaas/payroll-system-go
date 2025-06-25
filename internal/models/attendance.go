@@ -10,4 +10,6 @@ type Attendance struct {
 	CheckOut   *time.Time `gorm:"default:null"`
 	CreatedAt  time.Time
 	UpdatedAt  *time.Time `gorm:"default:null"`
+	CreatedBy  string
+	UpdatedBy  *string `gorm:"default:null"`
 }

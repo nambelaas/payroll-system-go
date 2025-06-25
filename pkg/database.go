@@ -27,6 +27,7 @@ func ConnectDB() {
 		&models.Overtime{},
 		&models.Reimbursement{},
 		&models.Payslip{},
+		&models.AuditLog{},
 	)
 
 	DB = db
@@ -39,6 +40,15 @@ func ConnectTestDB() *gorm.DB {
 		log.Fatal("Failed to connect to test DB")
 	}
 
-	db.AutoMigrate(&models.User{}, &models.Employee{}, &models.Attendance{}, &models.PayrollPeriod{}, &models.Reimbursement{}, &models.Overtime{}, &models.Payslip{})
+	db.AutoMigrate(
+		&models.User{}, 
+		&models.Employee{}, 
+		&models.Attendance{}, 
+		&models.PayrollPeriod{}, 
+		&models.Reimbursement{}, 
+		&models.Overtime{}, 
+		&models.Payslip{},
+		&models.AuditLog{},
+	)
 	return db
 }

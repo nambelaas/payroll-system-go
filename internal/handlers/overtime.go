@@ -108,6 +108,7 @@ func SubmitOvertime(c *gin.Context) {
 		StartTime:  start,
 		EndTime:    end,
 		Hours:      duration,
+		CreatedBy:  emp.Name,
 	}
 	pkg.DB.Create(&ot)
 

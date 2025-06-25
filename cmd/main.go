@@ -28,14 +28,14 @@ func main() {
 
 	// admin
 	admin := r.Group("/admin")
-	admin.Use(middlewares.JWTAuthMiddleware(), middlewares.OnlyRole("admin"))
+	admin.Use(middlewares.JWTAuthMiddleware(), middlewares.OnlyRole("admin"), middlewares.LogRequest())
 	admin.POST("/payroll-period", handlers.CreatePayrollPeriod)
 	admin.POST("/payroll/run", handlers.RunPayroll)
-	admin.GET("/payslip/summary/:payroll_period_id", handlers.RunPayroll)
+	admin.GET("/payslip/summary/:payroll_period_id", handlers.GetPayslipSummary)
 
 	// employee
 	employee := r.Group("/employee")
-	employee.Use(middlewares.JWTAuthMiddleware(), middlewares.OnlyRole("employee"))
+	employee.Use(middlewares.JWTAuthMiddleware(), middlewares.OnlyRole("employee"), middlewares.LogRequest())
 	employee.POST("/attendance/checkin", handlers.SubmitAttendance)
 	employee.POST("/attendance/checkout", handlers.SubmitCheckOut)
 	employee.POST("/overtime", handlers.SubmitOvertime)
